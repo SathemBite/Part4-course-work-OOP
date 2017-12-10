@@ -231,14 +231,72 @@ namespace Part4
             int getCountOfListenersOfFNames = fNames.Length - 1;
             int getCountOfListenersOfLNames = lNames.Length - 1;
             int age = GenerateAge();
-            Level level = generateLevel(age);
+
+            Dictionary<Language, CourseInf> courses = generateCourses(age);
             return new Student(
                 fNames[rand.Next(getCountOfListenersOfFNames) + 1] + " " + lNames[rand.Next(getCountOfListenersOfLNames) + 1],
                 age, 
-                generateLanguage(),
-                level,
-                generateIntensivity(level));
-        }*/
+                courses);
+        }
+
+        public static Dictionary<Language, CourseInf> generateCourses(int age)
+        {
+            Dictionary<Language, CourseInf> courses = new Dictionary<Language, CourseInf>();
+            KeyValuePair<Language, CourseInf> temp = generateCourse(age, null);
+            courses.Add(temp.Key, temp.Value);
+            Random rand = new Random();
+            LinkedList<Language> availCourse = new LinkedList<Language>((Language[])Enum.GetValues(typeof(Language)));
+            availCourse.Remove(temp.Key);
+
+            for (int i = 0; i < 5; i++)
+            {
+                if (rand.Next(10000) <= 10001 / Math.Pow(10, i + 1))
+                {
+                    temp = generateCourse(age, availCourse);
+                    courses.Add(temp.Key, temp.Value);
+                    availCourse.Remove(temp.Key);
+                }
+            }
+            return courses;
+        }
+
+        public static KeyValuePair<Language, CourseInf> generateCourse(int age, LinkedList<Language> availLang)
+        {
+            KeyValuePair<Language, CourseInf> course;
+            Language lang;
+
+            if (availLang == null)
+            {
+                lang = generateLanguage();
+            }
+            else
+            {
+                lang = availLang.ElementAt(new Random().Next(availLang.Count));
+            }
+            
+            availLang.Remove(lang);
+            Level level = generateLevel(age);
+            Intensity inten = generateIntensity(level);
+            bool isGroupClasses = isGroup();
+            LinkedList<DayOfWeek> visDays = generateVisitDaysOfWeek(isGroupClasses);
+            if (isGroupClasses)
+            {
+                if (isCanFormGroup(visDays, lang, level, inten))
+                {
+                    course = new KeyValuePair<Language, CourseInf>(lang, new CourseInf(inten, level, visDays, getTwoWeekCost(lang, inten, isGroupClasses, visDays.Count), true, true));
+                }
+                else
+                {
+                    course = new KeyValuePair<Language, CourseInf>(lang, new CourseInf(inten, level, visDays, getTwoWeekCost(lang, inten, isGroupClasses, visDays.Count), false, true));
+                }
+            }
+            else
+            {
+                course = new KeyValuePair<Language, CourseInf>(lang, new CourseInf(inten, level, visDays, getTwoWeekCost(lang, inten, isGroupClasses, visDays.Count), false, false));
+            }
+
+            return course;
+        }
 
         private static int GenerateAge()
         {
@@ -272,7 +330,7 @@ namespace Part4
             return Level.LOW;
         }
 
-        public static Intensity generateIntensivity(Level level)
+        public static Intensity generateIntensity(Level level)
         {
             int eval = rand.Next(100);
 
@@ -302,6 +360,12 @@ namespace Part4
                         : Intensity.MAINTAINING;
                 default: throw new ArgumentException(); 
             }
+        }
+
+        public static bool isGroup()
+        {
+            double rand = new Random().NextDouble();
+            return rand > 0.15 ? true : false;
         }
 
         public static Language generateLanguage(){
@@ -349,21 +413,28 @@ namespace Part4
         private static LinkedList<DayOfWeek> generateVisitDaysOfWeek(bool isGroup)
         {
             LinkedList<DayOfWeek> days = new LinkedList<DayOfWeek>();
+            Random rand = new Random();
+
             if (isGroup)
             {
-
+                days = rand.NextDouble() > 0.4 ? getConWDays() : getEvenWDays();
             }
-            Random rand = new Random();
-            foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek))){
-                if (rand.NextDouble() < 0.6)
+            else
+            {
+                foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
                 {
-                    days.AddLast(day);
+                    if (rand.NextDouble() < 0.6)
+                    {
+                        days.AddLast(day);
+                    }
+                }
+                if (days.Count == 0)
+                {
+                    days.AddLast((DayOfWeek)rand.Next(6));
                 }
             }
-            if (days.Count == 0)
-            {
-                days.AddLast((DayOfWeek)rand.Next(6));
-            }
+            
+            
             return days;
         }
 
