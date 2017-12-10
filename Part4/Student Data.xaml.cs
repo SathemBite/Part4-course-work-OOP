@@ -124,7 +124,7 @@ namespace Part4
             }
             else
             {
-                if (Courses.isSuchGroupExist(visD, lang, level, inten))
+                if (Courses.isCanFormGroup(visD, lang, level, inten))
                 {
                     courses.Add(lang,
                         new CourseInf(
@@ -150,7 +150,7 @@ namespace Part4
                             level,
                             visD,
                             Courses.getTwoWeekCost(lang, inten, isGroupClasses(), visD.Count),
-                            !isGroup,
+                            isGroup,
                             true));
                     }
                     else
@@ -203,9 +203,9 @@ namespace Part4
         {
             nSt = new Student(
                 new TextRange(NameBox.Document.ContentStart, NameBox.Document.ContentEnd).Text,
-                int.Parse(new TextRange(NameBox.Document.ContentStart, NameBox.Document.ContentEnd).Text),
-                courses,
-                determineVisitingDays());
+                int.Parse(new TextRange(AgeBox.Document.ContentStart, AgeBox.Document.ContentEnd).Text),
+                courses);
+            Close();
         }
 
         private LinkedList<DayOfWeek> determineVisitingDays()

@@ -29,13 +29,18 @@ namespace Part4
         private void button_Click(object sender, RoutedEventArgs e)
         {
             Student_Data newSt = new Student_Data();
-            newSt.Show();
+            newSt.ShowDialog();
             if (newSt.nSt != null)
             {
                 Courses.addStudent(newSt.nSt);
             }
             
             
+        }
+
+        private void button_formGroups_Click(object sender, RoutedEventArgs e)
+        {
+            Courses.formGroups();
         }
     }
 }

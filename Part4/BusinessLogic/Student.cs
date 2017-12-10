@@ -20,15 +20,35 @@ namespace Part4
             this.courses = courses;
         }
 
-        public bool containCourse(LinkedList<DayOfWeek> visDays, Language lang, Level level, Intensity inten)
+        public bool containsCourse(LinkedList<DayOfWeek> visDays, Language lang, Level level, Intensity inten)
         {
+
             return courses.Any(
                 course =>
-                course.Key == lang && 
-                course.Value.visitingDays == visDays && 
+                course.Key == lang &&
+                Enumerable.SequenceEqual(course.Value.visitingDays, visDays) && 
                 course.Value.level == level && 
                 course.Value.inten == inten);
         }
+
+        public bool containsCourse(Level level)
+        {
+            return courses.Any(
+                course => course.Value.level == level);
+        }
+
+        public bool containsCourse(Intensity inten)
+        {
+            return courses.Any(
+                course => course.Value.inten == inten);
+        }
+
+        public bool containsCourse(DayOfWeek day, Intensity inten)
+        {
+            return courses.Any(
+                course => course.Value.visitingDays.Contains(day) && course.Value.inten == inten);
+        }
+
 
         public override string ToString()
         {

@@ -24,7 +24,9 @@ namespace Part4
             id = IDgener++;
             students = new LinkedList<Student>();
         }
-        
+
+
+
         private Student getStudent(int index)
         {
             return students.ElementAt(index);

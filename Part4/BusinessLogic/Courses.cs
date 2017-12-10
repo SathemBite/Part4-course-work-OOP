@@ -65,11 +65,125 @@ namespace Part4
 
         public static bool isCanFormGroup(LinkedList<DayOfWeek> visDays, Language lang, Level level, Intensity inten) {
             LinkedList<Student> wishGroupStudents; 
-            bool isGrExist = individualC.TryGetValue(lang, out wishGroupStudents);
+            bool isSuchStudentsExist = individualWishGroupC.TryGetValue(lang, out wishGroupStudents);
 
-            return isGrExist 
-                ? wishGroupStudents.Where(st => st.containCourse(visDays, lang, level, inten)).Count() >= 5
+            return isSuchStudentsExist
+                ? wishGroupStudents.Where(st => st.containsCourse(visDays, lang, level, inten)).Count() >= 4
                 : false;
+        }
+
+        public static void formGroups()
+        {
+            foreach (Language lang in Enum.GetValues(typeof(Language)))
+            {
+                LinkedList<Student> specLangSt;
+                if (individualWishGroupC.TryGetValue(lang, out specLangSt))
+                {
+                    if (specLangSt.Count < 5)
+                    {
+                        continue;
+                    }
+                    foreach (Level level in Enum.GetValues(typeof(Level)))
+                    {
+                        if (specLangSt.Any(st => st.containsCourse(level))){
+                            LinkedList<Student> specLevelSt = 
+                                new LinkedList<Student>(specLangSt.Where(st => st.containsCourse(level)));
+                            if (specLevelSt.Count < 5)
+                            {
+                                continue;
+                            }
+                            foreach (Intensity inten in Enum.GetValues(typeof(Intensity)))
+                            {
+                                if (specLevelSt.Any(st => st.containsCourse(inten))){
+                                    LinkedList<Group> existGr;
+                                    IEnumerable<Student> evenDaysSt = specLangSt.Where(
+                                        st => st.containsCourse(DayOfWeek.TUE, inten));
+                                    IEnumerable<Student> conDaysSt = specLangSt.Where(
+                                        st => st.containsCourse(DayOfWeek.MON, inten));
+                                    LinkedList<Student> sts = new LinkedList<Student>(conDaysSt.ToList());
+                                    if (groupC.TryGetValue(lang, out existGr))
+                                    {
+                                        if (conDaysSt.Count() >= 5)
+                                        {
+                                            existGr = new LinkedList<Group>(existGr.Concat(formSpecGroups(new LinkedList<Student>(conDaysSt.ToList()), lang, level, inten, getConWDays()).ToList()));
+                                        }
+                                        if (evenDaysSt.Count() >= 5)
+                                        {
+                                            existGr = new LinkedList<Group>(existGr.Concat(formSpecGroups(new LinkedList<Student>(evenDaysSt.ToList()), lang, level, inten, getEvenWDays()).ToList()));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (conDaysSt.Count() >= 5)
+                                        {
+                                            existGr = formSpecGroups(new LinkedList<Student>(conDaysSt.ToList()), lang, level, inten, getConWDays());
+                                        }
+                                        if (evenDaysSt.Count() >= 5)
+                                        {
+                                            existGr = formSpecGroups(new LinkedList<Student>(evenDaysSt.ToList()), lang, level, inten, getEvenWDays());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }             
+            }
+        }
+
+        public static LinkedList<DayOfWeek> getConWDays()
+        {
+            LinkedList<DayOfWeek> days = new LinkedList<DayOfWeek>();
+            days.AddLast(DayOfWeek.MON);
+            days.AddLast(DayOfWeek.WED);
+            days.AddLast(DayOfWeek.FRI);
+            return days;
+        }
+
+        public static LinkedList<DayOfWeek> getEvenWDays()
+        {
+            LinkedList<DayOfWeek> days = new LinkedList<DayOfWeek>();
+            days.AddLast(DayOfWeek.TUE);
+            days.AddLast(DayOfWeek.THU);
+            return days;
+        }
+
+        public static LinkedList<Group> formSpecGroups(
+            LinkedList<Student> students, Language lang, 
+            Level level, 
+            Intensity inten, 
+            LinkedList<DayOfWeek> visDays)
+        {
+            int countOfSpecGroups = students.Count / 10 + students.Count % 10 == 0 ? 0 : 1;
+            LinkedList<Group> res = new LinkedList<Group>();
+
+            for (int i = 0; i < countOfSpecGroups; i++)
+            {
+                Group temp = new Group(lang, level, inten, visDays);
+                for (int j = 0; j < 5; j++)
+                {
+                    temp.addStudent(students.First());
+                    Student s = students.First();
+                    students.RemoveFirst();
+                    students.AddLast(s);
+                }
+                res.AddLast(temp);
+            }
+
+            int remStud = students.Count - countOfSpecGroups * 5;
+
+            for (int i = 0; i < remStud; i++)
+            {
+                res.First().addStudent(students.First());
+                Group temp = res.First();
+                res.RemoveFirst();
+                res.AddLast(temp);
+                Student s = students.First();
+                students.RemoveFirst();
+                students.AddLast(s);
+            }
+
+            return res;
         }
 
 
@@ -77,7 +191,6 @@ namespace Part4
 
         public static void addStudent(Student addingStudent)
         {
-            Group studGr;
             foreach (KeyValuePair<Language, CourseInf> course in addingStudent.courses)
             {
                 if (course.Value.isWishGroup)
@@ -111,16 +224,16 @@ namespace Part4
             }
         }
 
-        /*public static Student GenerateStudent()
+        public static Student GenerateStudent()
         {
             String[] fNames = Properties.Resources.CSV_Database_of_First_Names.Split('\u000D');
             String[] lNames = Properties.Resources.CSV_Database_of_Last_Names.Split('\u000D');
-            int getCountOfListeners()OfFNames = fNames.Length - 1;
-            int getCountOfListeners()OfLNames = lNames.Length - 1;
+            int getCountOfListenersOfFNames = fNames.Length - 1;
+            int getCountOfListenersOfLNames = lNames.Length - 1;
             int age = GenerateAge();
             Level level = generateLevel(age);
             return new Student(
-                fNames[rand.Next(getCountOfListeners()OfFNames) + 1] + " " + lNames[rand.Next(getCountOfListeners()OfLNames) + 1],
+                fNames[rand.Next(getCountOfListenersOfFNames) + 1] + " " + lNames[rand.Next(getCountOfListenersOfLNames) + 1],
                 age, 
                 generateLanguage(),
                 level,
@@ -221,21 +334,25 @@ namespace Part4
                 default: cost = 0; break;
             }
             if (intens == Intensity.INTENSIVE)
-                cost *= 1.5;
+                cost *= 1.25;
             if (intens == Intensity.MAINTAINING)
-                cost *= 0.5;
+                cost *= 0.75;
 
             if (!isGroup)
             {
-                cost *= 2.5;
+                cost *= 3;
             }
 
             return (int) (cost * days);
         }
 
-        private static LinkedList<DayOfWeek> generateVisitDaysOfWeek()
+        private static LinkedList<DayOfWeek> generateVisitDaysOfWeek(bool isGroup)
         {
             LinkedList<DayOfWeek> days = new LinkedList<DayOfWeek>();
+            if (isGroup)
+            {
+
+            }
             Random rand = new Random();
             foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek))){
                 if (rand.NextDouble() < 0.6)
@@ -250,6 +367,15 @@ namespace Part4
             return days;
         }
 
+        public static bool isLeaveCourse(int classNum)
+        {
+            double arg = (double) 1 / Math.Pow(2, classNum);
+            Random random = new Random();
+            double rand = random.NextDouble() * 2;
+            return (1 / (1 + Math.Pow(Math.E, arg))) > rand;
+
+        }
+
         public void regroup(LinkedList<Group> groups)
         {
             groups.OrderBy(group => group.getCountOfListeners());
@@ -262,6 +388,7 @@ namespace Part4
                 groups.OrderBy(group => group.getCountOfListeners());
             }
         }
+
 
     }
 }
