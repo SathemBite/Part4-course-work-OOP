@@ -14,12 +14,6 @@ namespace Part4
         HIGH
     }
 
-    public enum VisitingDays
-    {
-        MON_WED_FRI,
-        TUE_THU_SAT
-    }
-
     public enum Language
     {
         ENGLISH,
@@ -43,8 +37,7 @@ namespace Part4
         TUE,
         WED,
         THU,
-        FRI,
-        SAT
+        FRI
     }
 
     public enum ClassTime
@@ -54,42 +47,80 @@ namespace Part4
         EVENING
     }
 
-    public enum ClassesType
-    {
-        GROUP,
-        INDIVIDUAL
-    }
-
-
 
     class Courses
     {
-        private static Dictionary<Language, Course> courses;
+        private static Dictionary<Language, LinkedList<Group>> groupC;
+        private static Dictionary<Language, LinkedList<Student>> individualC;
+        private static Dictionary<Language, LinkedList<Student>> individualWishGroupC;
         private static Random rand;
 
         static Courses()
         {
+            groupC = new Dictionary<Language, LinkedList<Group>>();
+            individualC = new Dictionary<Language, LinkedList<Student>>();
+            individualWishGroupC = new Dictionary<Language, LinkedList<Student>>();
             rand = new Random();
         }
 
-        public static void addStudent() {
+        public static bool isCanFormGroup(LinkedList<DayOfWeek> visDays, Language lang, Level level, Intensity inten) {
+            LinkedList<Student> wishGroupStudents; 
+            bool isGrExist = individualC.TryGetValue(lang, out wishGroupStudents);
+
+            return isGrExist 
+                ? wishGroupStudents.Where(st => st.containCourse(visDays, lang, level, inten)).Count() >= 5
+                : false;
         }
+
+
+
 
         public static void addStudent(Student addingStudent)
         {
-
+            Group studGr;
+            foreach (KeyValuePair<Language, CourseInf> course in addingStudent.courses)
+            {
+                if (course.Value.isWishGroup)
+                {
+                    LinkedList<Student> wishGroupSt;
+                    if (individualWishGroupC.TryGetValue(course.Key, out wishGroupSt))
+                    {
+                        wishGroupSt.AddLast(addingStudent);
+                    }
+                    else
+                    {
+                        wishGroupSt = new LinkedList<Student>();
+                        wishGroupSt.AddLast(addingStudent);
+                        individualWishGroupC.Add(course.Key, wishGroupSt);
+                    }
+                }
+                else
+                {
+                    LinkedList<Student> indivClassesSt;
+                    if (individualC.TryGetValue(course.Key, out indivClassesSt)) 
+                    {
+                        indivClassesSt.AddLast(addingStudent);
+                    }
+                    else
+                    {
+                        indivClassesSt = new LinkedList<Student>();
+                        indivClassesSt.AddLast(addingStudent);
+                        individualC.Add(course.Key, indivClassesSt);
+                    }
+                }
+            }
         }
 
         /*public static Student GenerateStudent()
         {
             String[] fNames = Properties.Resources.CSV_Database_of_First_Names.Split('\u000D');
             String[] lNames = Properties.Resources.CSV_Database_of_Last_Names.Split('\u000D');
-            int countOfFNames = fNames.Length - 1;
-            int countOfLNames = lNames.Length - 1;
+            int getCountOfListeners()OfFNames = fNames.Length - 1;
+            int getCountOfListeners()OfLNames = lNames.Length - 1;
             int age = GenerateAge();
             Level level = generateLevel(age);
             return new Student(
-                fNames[rand.Next(countOfFNames) + 1] + " " + lNames[rand.Next(countOfLNames) + 1],
+                fNames[rand.Next(getCountOfListeners()OfFNames) + 1] + " " + lNames[rand.Next(getCountOfListeners()OfLNames) + 1],
                 age, 
                 generateLanguage(),
                 level,
@@ -176,7 +207,7 @@ namespace Part4
                 : Language.JAPANESE;
         }
 
-        public static int getHalfMonthCost(Language lang, Intensity intens, bool isIndivid, int days)
+        public static int getTwoWeekCost(Language lang, Intensity intens, bool isGroup, int days)
         {
             double cost = 0;
             switch (lang)
@@ -194,7 +225,7 @@ namespace Part4
             if (intens == Intensity.MAINTAINING)
                 cost *= 0.5;
 
-            if (isIndivid)
+            if (!isGroup)
             {
                 cost *= 2.5;
             }
@@ -217,6 +248,19 @@ namespace Part4
                 days.AddLast((DayOfWeek)rand.Next(6));
             }
             return days;
+        }
+
+        public void regroup(LinkedList<Group> groups)
+        {
+            groups.OrderBy(group => group.getCountOfListeners());
+            while (groups.Last().getCountOfListeners() - groups.First().getCountOfListeners() > 1)
+            {
+                Group.moveStudents(
+                    groups.Last(),
+                    groups.First(),
+                    Math.Min(Math.Abs(groups.Last().getCountOfListeners() - 7), Math.Abs(groups.First().getCountOfListeners() - 7)));
+                groups.OrderBy(group => group.getCountOfListeners());
+            }
         }
 
     }

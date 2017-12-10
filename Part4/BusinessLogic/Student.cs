@@ -9,18 +9,25 @@ namespace Part4
     {
         public readonly string fullName;
         public readonly int age;
-        private Dictionary<Language, SkillProps> skills;
-        private VisitingDays visitingDays;
-        private ClassTime classTime; 
+        public Dictionary<Language, CourseInf> courses { get; set; }
 
 
-        public  Student(string fullName, int age, Dictionary<Language, SkillProps> skills, ClassTime classTime, VisitingDays visitingDays)
+
+        public  Student(string fullName, int age, Dictionary<Language, CourseInf> courses)
         {
             this.fullName = fullName;
             this.age = age;
-            this.skills = skills;
-            this.visitingDays = visitingDays;
-            this.classTime = classTime;
+            this.courses = courses;
+        }
+
+        public bool containCourse(LinkedList<DayOfWeek> visDays, Language lang, Level level, Intensity inten)
+        {
+            return courses.Any(
+                course =>
+                course.Key == lang && 
+                course.Value.visitingDays == visDays && 
+                course.Value.level == level && 
+                course.Value.inten == inten);
         }
 
         public override string ToString()

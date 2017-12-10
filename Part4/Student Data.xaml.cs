@@ -14,17 +14,34 @@ using System.Windows.Shapes;
 namespace Part4
 {
 
-    public struct SkillProps
+
+    public struct CourseInf
     {
-        public SkillProps(KeyValuePair<Level, Intensity> skill, ClassTime classTime, VisitingDays visitingDays)
+        public Intensity inten;
+        public Level level;
+        public LinkedList<DayOfWeek> visitingDays;
+        public LinkedList<bool> visits;
+        public int costPerTwoW;
+        public int classVisited;
+        public bool isGroup;
+        public bool isPaid;
+        public bool isWishGroup;
+
+
+        
+
+        public CourseInf(Intensity inten, Level level, LinkedList<DayOfWeek> visitingDays, int costPerTwoW, bool isGroup, bool isWishGroup)
         {
-            this.skill = skill;
-            this.classTime = classTime;
+            this.inten = inten;
+            this.level = level;
             this.visitingDays = visitingDays;
+            this.costPerTwoW = costPerTwoW;
+            this.visits = new LinkedList<bool>();
+            this.classVisited = 0;
+            this.isPaid = false;
+            this.isGroup = isGroup;
+            this.isWishGroup = isWishGroup;
         }
-        KeyValuePair<Level, Intensity> skill;
-        ClassTime classTime;
-        VisitingDays visitingDays;
     }
 
     /// <summary>
@@ -33,11 +50,11 @@ namespace Part4
     public partial class Student_Data : Window
     {
         public Student nSt;
-        private Dictionary<Language, SkillProps> skills;
+        private Dictionary<Language, CourseInf> courses;
         public Student_Data()
         {
             InitializeComponent();
-            skills = new Dictionary<Language, SkillProps>();
+            courses = new Dictionary<Language, CourseInf>();
             textBox_FocusChagedHandler(NameBox, false, "Enter your name here...");
             textBox_FocusChagedHandler(AgeBox, false, "Enter your age here...");
             skills_TextBox.Document.Blocks.Clear();
@@ -82,39 +99,88 @@ namespace Part4
 
         private void addSkillBut_Click(object sender, RoutedEventArgs e)
         {
-            if (skills.ContainsKey((Language)language_Box.SelectedValue))
+            if (courses.ContainsKey((Language)language_Box.SelectedValue))
             {
-                MessageBox.Show("Skill with the specified language is exist!!!");
+                MessageBox.Show("Course with the specified language is exist!!!");
                 return;
             }
-            skills.Add(
-                (Language)language_Box.SelectedValue, 
-                new SkillProps(
-                    new KeyValuePair<Level, Intensity>((Level)level_Box.SelectedValue, (Intensity)intensity_Box.SelectedValue),
-                    determineClassTime(),
-                    determineVisitingDays()));
 
+            Language lang = (Language)language_Box.SelectedValue;
+            Level level = (Level)level_Box.SelectedValue;
+            Intensity inten = (Intensity)intensity_Box.SelectedValue;
+            LinkedList<DayOfWeek> visD = determineVisitingDays();
+            bool isGroup = isGroupClasses();
+
+            if (!isGroup)
+            {
+                courses.Add(lang,
+                new CourseInf(
+                inten,
+                level,
+                visD,
+                Courses.getTwoWeekCost(lang, inten, isGroupClasses(), visD.Count),
+                isGroup,
+                false));
+            }
+            else
+            {
+                if (Courses.isSuchGroupExist(visD, lang, level, inten))
+                {
+                    courses.Add(lang,
+                        new CourseInf(
+                            inten,
+                            level,
+                            visD,
+                            Courses.getTwoWeekCost(lang, inten, isGroupClasses(), visD.Count),
+                            isGroup,
+                            true));
+                }
+                else
+                {
+                    MessageBoxResult mbRes = MessageBox
+                        .Show("Group with the specified parameters don't exist.\n       We can enroll you on individual classes.",
+                        "Confirm individual classes",
+                        MessageBoxButton.YesNo);
+                    if (mbRes == MessageBoxResult.Yes)
+                    {
+                        isGroup = !isGroup;
+                        courses.Add(lang,
+                        new CourseInf(
+                            inten,
+                            level,
+                            visD,
+                            Courses.getTwoWeekCost(lang, inten, isGroupClasses(), visD.Count),
+                            !isGroup,
+                            true));
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
 
             if (skills_TextBox.Document.Blocks.LastBlock != null)
             {
                 skills_TextBox.Selection.ApplyPropertyValue(Paragraph.MarginProperty, new Thickness(0));
                 skills_TextBox.AppendText("\n");
             }
+
             skills_TextBox.AppendText(
-                language_Box.SelectedValue 
-                + "-" 
-                + level_Box.SelectedValue 
-                + "-" 
+                language_Box.SelectedValue
+                + "-"
+                + level_Box.SelectedValue
+                + "-"
                 + intensity_Box.SelectedValue
                 + "-"
-                + determineVisitingDays()
+                + (isGroup ? "Group" : "Individual")
                 + "-"
-                + determineClassTime());
+                + String.Join(" ", determineVisitingDays()));
         }
 
         private void deleteSkill_But_Click(object sender, RoutedEventArgs e)
         {
-
+            courses.Remove((Language)language_Box.SelectedValue);
             skills_TextBox.Document.Blocks.Remove(skills_TextBox.Document.Blocks.LastBlock);
         }
 
@@ -138,36 +204,57 @@ namespace Part4
             nSt = new Student(
                 new TextRange(NameBox.Document.ContentStart, NameBox.Document.ContentEnd).Text,
                 int.Parse(new TextRange(NameBox.Document.ContentStart, NameBox.Document.ContentEnd).Text),
-                skills,
-                determineClassTime(),
+                courses,
                 determineVisitingDays());
         }
 
-        private VisitingDays determineVisitingDays()
+        private LinkedList<DayOfWeek> determineVisitingDays()
         {
-            if ((bool)visiting_days2_radiobtn.IsChecked)
-                return VisitingDays.TUE_THU_SAT;
-            else
-                return VisitingDays.MON_WED_FRI;
-        }
-
-        private ClassTime determineClassTime()
-        {
-            if ((bool)afternoon_course_radiobtn.IsChecked)
+            LinkedList<DayOfWeek> visDays = new LinkedList<DayOfWeek>();
+            if (tabs_groupAndIndividual.SelectedIndex == 0)
             {
-                return ClassTime.AFTERNOON;
-            }
-            else
-            {
-                if ((bool)evening_course_radiobtn.IsChecked)
+                if ((bool)visiting_days1_radiobtn.IsChecked)
                 {
-                    return ClassTime.EVENING;
+                    visDays.AddLast(DayOfWeek.MON);
+                    visDays.AddLast(DayOfWeek.WED);
+                    visDays.AddLast(DayOfWeek.FRI);
                 }
                 else
                 {
-                    return ClassTime.MORNING;
+                    visDays.AddLast(DayOfWeek.TUE);
+                    visDays.AddLast(DayOfWeek.THU);
                 }
-            } 
+            }
+            else
+            {
+                CheckBox[] checkBoxes = { chB_mon, chB_tue, chB_wed, chB_thu, chB_fri};
+                foreach (CheckBox chB in checkBoxes)
+                {
+                    if ((bool)chB.IsChecked)
+                    {
+                        visDays.AddLast((DayOfWeek)Enum.Parse(typeof(DayOfWeek), (string)chB.Content));
+                    }
+                }
+            }
+
+            return visDays;
+        }
+
+        private bool isGroupClasses()
+        {
+            if ((tabs_groupAndIndividual.SelectedItem as TabItem).Header.Equals("Individual"))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void button_cancelEnrolling_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -6,15 +6,15 @@
         xmlns:local="clr-namespace:Part4"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="Part4.Student_Data"
         mc:Ignorable="d"
-        Title="Student_Data" Height="652.829" Width="597.244" WindowStartupLocation="CenterOwner">
+        Title="Student_Data" Height="649.829" Width="600.844" WindowStartupLocation="CenterOwner">
     <Grid RenderTransformOrigin="0.506,0.5">
-        <ComboBox x:Name="level_Box" HorizontalAlignment="Left" Height="30" Margin="19,203,0,0" VerticalAlignment="Top" Width="131" SelectedIndex="0" FontSize="16">
+        <ComboBox x:Name="level_Box" HorizontalAlignment="Left" Height="30" Margin="312,196,0,0" VerticalAlignment="Top" Width="212" SelectedIndex="0" FontSize="16">
             <local:Level>LOW</local:Level>
             <local:Level>MIDDLE</local:Level>
             <local:Level>ADVANCED</local:Level>
             <local:Level>HIGH</local:Level>
         </ComboBox>
-        <ComboBox x:Name="language_Box" HorizontalAlignment="Left" Height="31" Margin="19,167,0,0" VerticalAlignment="Top" Width="131" IsDropDownOpen="False" SelectedIndex="0" FontSize="16">
+        <ComboBox x:Name="language_Box" HorizontalAlignment="Left" Height="30" Margin="312,160,0,0" VerticalAlignment="Top" Width="212" IsDropDownOpen="False" SelectedIndex="0" FontSize="16">
             <local:Language>ENGLISH</local:Language>
             <local:Language>GERMAN</local:Language>
             <local:Language>FRENCH</local:Language>
@@ -22,10 +22,10 @@
             <local:Language>RUSSIAN</local:Language>
             <local:Language>JAPANESE</local:Language>
         </ComboBox>
-        <Button x:Name="addSkillBut" Content="ADD" HorizontalAlignment="Left" Height="29" Margin="19,293,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="0.5,0.5" FontSize="16" Click="addSkillBut_Click"/>
-        <Button x:Name="deleteSkill_But" Content="DELETE" HorizontalAlignment="Left" Height="29" Margin="19,330,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="0.5,0.5" FontSize="16" Click="deleteSkill_But_Click"/>
-        <Label Content="SKILLS:" HorizontalAlignment="Left" Height="30" Margin="182,161,0,0" VerticalAlignment="Top" Width="85" FontSize="16"/>
-        <RichTextBox x:Name="skills_TextBox" HorizontalAlignment="Left" Height="231" Margin="182,197,0,0" VerticalAlignment="Top" Width="342" Background="#FFDED9D9" VerticalScrollBarVisibility="Auto" FontSize="16" IsReadOnly="True">
+        <Button x:Name="addSkillBut" Content="ADD" HorizontalAlignment="Left" Height="30" Margin="312,280,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="0.5,0.5" FontSize="16" Click="addSkillBut_Click"/>
+        <Button x:Name="deleteSkill_But" Content="DELETE" HorizontalAlignment="Left" Height="30" Margin="428,280,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="0.5,0.5" FontSize="16" Click="deleteSkill_But_Click"/>
+        <Label Content="COURSES:" HorizontalAlignment="Left" Height="30" Margin="19,316,0,0" VerticalAlignment="Top" Width="85" FontSize="16"/>
+        <RichTextBox x:Name="skills_TextBox" HorizontalAlignment="Left" Height="190" Margin="19,351,0,0" VerticalAlignment="Top" Width="550" Background="#FFDED9D9" VerticalScrollBarVisibility="Auto" FontSize="16" IsReadOnly="True">
             <FlowDocument>
                 <Paragraph Margin="Auto,0,Auto,0">
                     <Run/>
@@ -34,7 +34,7 @@
         </RichTextBox>
         <Label Content="Full name:" HorizontalAlignment="Left" Height="31" Margin="19,32,0,0" VerticalAlignment="Top" Width="108" FontSize="16"/>
         <Label Content="Age:" HorizontalAlignment="Left" Height="37" Margin="19,76,0,0" VerticalAlignment="Top" Width="108" FontSize="16"/>
-        <Label Content="Add language(several if it is), level and intensity:" HorizontalAlignment="Left" Height="32" Margin="19,118,0,0" VerticalAlignment="Top" Width="359" FontSize="16"/>
+        <Label Content="Choose course language(several if it is), level and intensity:" HorizontalAlignment="Left" Height="32" Margin="19,118,0,0" VerticalAlignment="Top" Width="359" FontSize="16"/>
         <RichTextBox x:Name="NameBox" HorizontalAlignment="Left" Height="27" Margin="182,36,0,0" VerticalAlignment="Top" Width="342" FontSize="16" AcceptsReturn="False" LostFocus="NameBox_LostFocus" GotFocus="NameBox_GotFocus">
             <FlowDocument>
                 <Paragraph>
@@ -49,19 +49,50 @@
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
-        <ComboBox x:Name="intensity_Box" HorizontalAlignment="Left" Height="30" Margin="19,238,0,0" VerticalAlignment="Top" Width="131" SelectedIndex="0" FontSize="16">
+        <ComboBox x:Name="intensity_Box" HorizontalAlignment="Left" Height="30" Margin="312,230,0,0" VerticalAlignment="Top" Width="212" SelectedIndex="0" FontSize="16">
             <local:Intensity>MAINTAINING</local:Intensity>
             <local:Intensity>STANDARD</local:Intensity>
             <local:Intensity>INTENSIVE</local:Intensity>
         </ComboBox>
-        <RadioButton x:Name="morning_course_radiobtn" Content="Morning" HorizontalAlignment="Left" Height="27" Margin="22,453,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="DayTime_radiobtns"/>
-        <RadioButton x:Name="afternoon_course_radiobtn" Content="Afternoon" HorizontalAlignment="Left" Height="27" Margin="22,480,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="DayTime_radiobtns"/>
-        <RadioButton x:Name="evening_course_radiobtn" Content="Evening" HorizontalAlignment="Left" Height="27" Margin="22,507,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="DayTime_radiobtns"/>
-        <RadioButton x:Name="individual_course_radiobtn" Content="Individual course" HorizontalAlignment="Left" Height="27" Margin="347,453,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="ClassType_radiobtns"/>
-        <RadioButton x:Name="group_course_radiobtn" Content="Group course" HorizontalAlignment="Left" Height="27" Margin="347,480,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="ClassType_radiobtns"/>
-        <Button x:Name="enrollStudent" Content="ENROLL" HorizontalAlignment="Left" Height="29" Margin="398,553,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="0.5,0.5" FontSize="16" Click="enrollStudent_Click"/>
-        <RadioButton x:Name="visiting_days1_radiobtn" Content="MON, WED, FRI" HorizontalAlignment="Left" Height="27" Margin="160,453,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="Days_radiobtns"/>
-        <RadioButton x:Name="visiting_days2_radiobtn" Content="TUE, THU, SAT" HorizontalAlignment="Left" Height="27" Margin="160,480,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="Days_radiobtns"/>
+        <Button x:Name="enrollStudent" Content="ENROLL" HorizontalAlignment="Left" Height="29" Margin="473,559,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="0.5,0.5" FontSize="16" Click="enrollStudent_Click" Background="#FF98E598"/>
+        <TabControl x:Name="tabs_groupAndIndividual" HorizontalAlignment="Left" Height="156" Margin="19,155,0,0" VerticalAlignment="Top" Width="234" IsSynchronizedWithCurrentItem="True">
+            <TabItem x:Name="tab_daysGroup" Header="Group" IsSelected="True">
+                <Grid Background="#FFE5E5E5">
+                    <RadioButton x:Name="visiting_days2_radiobtn" Content="TUE, THU" HorizontalAlignment="Left" Height="27" Margin="5,37,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="Days_radiobtns" IsChecked="True"/>
+                    <RadioButton x:Name="visiting_days1_radiobtn" Content="MON, WED, FRI" HorizontalAlignment="Left" Height="27" Margin="5,10,0,0" VerticalAlignment="Top" Width="166" FontSize="16" Padding="4,-4,0,0" GroupName="Days_radiobtns" IsChecked="True"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="tab_daysIndividual" Header="Individual">
+                <Grid Background="#FFE5E5E5">
+                    <CheckBox x:Name="chB_mon" Content="MON" HorizontalAlignment="Left" Height="18" Margin="10,10,0,0" VerticalAlignment="Top" Width="96" FontSize="16" Padding="4,-4,0,0" IsChecked="True">
+                        <CheckBox.DataContext>
+                            <local:DayOfWeek>MON</local:DayOfWeek>
+                        </CheckBox.DataContext>
+                    </CheckBox>
+                    <CheckBox x:Name="chB_tue" Content="TUE" HorizontalAlignment="Left" Height="18" Margin="10,33,0,0" VerticalAlignment="Top" Width="96" FontSize="16" Padding="4,-4,0,0">
+                        <CheckBox.DataContext>
+                            <local:DayOfWeek>TUE</local:DayOfWeek>
+                        </CheckBox.DataContext>
+                    </CheckBox>
+                    <CheckBox x:Name="chB_wed" Content="WED" HorizontalAlignment="Left" Height="18" Margin="10,56,0,0" VerticalAlignment="Top" Width="96" FontSize="16" Padding="4,-4,0,0" IsChecked="True">
+                        <CheckBox.DataContext>
+                            <local:DayOfWeek>WED</local:DayOfWeek>
+                        </CheckBox.DataContext>
+                    </CheckBox>
+                    <CheckBox x:Name="chB_thu" Content="THU" HorizontalAlignment="Left" Height="18" Margin="10,79,0,0" VerticalAlignment="Top" Width="96" FontSize="16" Padding="4,-4,0,0">
+                        <CheckBox.DataContext>
+                            <local:DayOfWeek>THU</local:DayOfWeek>
+                        </CheckBox.DataContext>
+                    </CheckBox>
+                    <CheckBox x:Name="chB_fri" Content="FRI" HorizontalAlignment="Left" Height="18" Margin="10,102,0,0" VerticalAlignment="Top" Width="96" FontSize="16" Padding="4,-4,0,0" IsChecked="True">
+                        <CheckBox.DataContext>
+                            <local:DayOfWeek>FRI</local:DayOfWeek>
+                        </CheckBox.DataContext>
+                    </CheckBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Button x:Name="button_cancelEnrolling" Content="CANCEL" HorizontalAlignment="Left" Height="29" Margin="366,559,0,0" VerticalAlignment="Top" Width="96" RenderTransformOrigin="0.5,0.5" FontSize="16" Click="button_cancelEnrolling_Click" Background="#FFF6BFB3"/>
 
     </Grid>
 </Window>

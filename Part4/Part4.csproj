@@ -55,7 +55,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BusinessLogic\Course.cs" />
     <Compile Include="BusinessLogic\Courses.cs" />
     <Compile Include="BusinessLogic\Group.cs" />
     <Compile Include="BusinessLogic\Student.cs" />

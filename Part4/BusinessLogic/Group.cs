@@ -7,13 +7,23 @@ namespace Part4
 {
     class Group
     {
-        private static int IDgener = 0;
-        private readonly int id;
+        private static int IDgener = 1;
+        public int id { get; private set; }
         private LinkedList<Student> students;
-        private readonly Language lang;
-        private readonly Level level;
-        private readonly Intensity inten;
-        public int count;
+        public Language lang { get; private set; }
+        public Level level { get; private set; }
+        public Intensity inten { get; private set; }
+        public LinkedList<DayOfWeek> visDays;
+
+        public Group(Language lang, Level level, Intensity inten, LinkedList<DayOfWeek> visDays)
+        {
+            this.lang = lang;
+            this.level = level;
+            this.inten = inten;
+            this.visDays = visDays;
+            id = IDgener++;
+            students = new LinkedList<Student>();
+        }
         
         private Student getStudent(int index)
         {
@@ -28,6 +38,11 @@ namespace Part4
         public void addStudent(Student student)
         {
             students.AddLast(student);
+        }
+
+        public int getCountOfListeners()
+        {
+            return students.Count;
         }
 
         public static void moveStudents(Group src, Group dest, int count)

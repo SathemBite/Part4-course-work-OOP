@@ -17,7 +17,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="36,40,0,0" VerticalAlignment="Top" Width="96" Click="button_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="48" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5">
+        <Button x:Name="button" Content="Enroll custom studnt" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="203" Click="button_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -27,13 +27,23 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <RichTextBox x:Name="richTextBox" Margin="218,40,0,35" RenderTransformOrigin="0.508,0.506" HorizontalAlignment="Left" Width="692" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" Background="#FFB4B4B4" IsReadOnly="True">
+        <RichTextBox x:Name="richTextBox" Margin="239,40,0,35" RenderTransformOrigin="0.508,0.506" HorizontalAlignment="Left" Width="692" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" Background="#FFB4B4B4" IsReadOnly="True">
             <FlowDocument Cursor="Arrow">
                 <Paragraph>
                     <Run Text="RichTextBox"/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>
+        <Button x:Name="button_Copy1" Content="Enroll random student" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top" Width="203" Click="button_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1" ScaleX="1"/>
+                    <SkewTransform AngleY="0" AngleX="0"/>
+                    <RotateTransform Angle="0"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
 
     </Grid>
 </Window>
