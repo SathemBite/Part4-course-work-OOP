@@ -15,16 +15,17 @@ namespace Part4
 {
 
 
-    public struct CourseInf
+    public class CourseInf
     {
+        
         public Intensity inten;
         public Level level;
         public LinkedList<DayOfWeek> visitingDays;
         public LinkedList<bool> visits;
         public int costPerTwoW;
-        public int classVisited;
+        public int duration;
         public bool isGroup;
-        public bool isPaid;
+        public CourseStatus status;
         public bool isWishGroup;
 
 
@@ -37,10 +38,33 @@ namespace Part4
             this.visitingDays = visitingDays;
             this.costPerTwoW = costPerTwoW;
             this.visits = new LinkedList<bool>();
-            this.classVisited = 0;
-            this.isPaid = false;
+            this.status = CourseStatus.ACTIVE;
             this.isGroup = isGroup;
+            this.duration = isWishGroup ? isGroup ? Courses.getCourseDurationInWeeks(inten) : 4 : Courses.getCourseDurationInWeeks(inten) * 2;
             this.isWishGroup = isWishGroup;
+        }
+
+        public bool oneDayStep(int age)
+        {
+            if (Courses.isLeaveCourse(visits.Count()))
+            {
+                status = CourseStatus.LEAVED;
+                return false;
+            }
+            else
+            {
+                if (visits.Count() / visitingDays.Count() == duration)
+                {
+                    status = CourseStatus.FINISHED;
+                    return false;
+                }
+                else
+                {
+                    visits.AddLast(Courses.isVisitClass(age));
+                    return true;
+                }
+                
+            }
         }
     }
 

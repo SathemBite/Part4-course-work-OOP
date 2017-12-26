@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
+using Part4.BusinessLogic.AdaptersToDataGrid;
 
 namespace Part4
 {
@@ -47,19 +49,39 @@ namespace Part4
         EVENING
     }
 
+    public enum CourseStatus
+    {
+        LEAVED,
+        ACTIVE,
+        FINISHED
+    }
+
+    public struct DisplayData
+    {
+        public LinkedList<Group> groups;
+        LinkedList<Student> students;
+        LinkedList<CourseInf> courses;
+    }
 
     class Courses
     {
-        private static Dictionary<Language, LinkedList<Group>> groupC;
+        private static Dictionary<Language, List<Group>> groupC;
         private static Dictionary<Language, LinkedList<Student>> individualC;
         private static Dictionary<Language, LinkedList<Student>> individualWishGroupC;
+        private static LinkedList<Group> allGroups;
+        private static LinkedList<Student> allStudents;
         private static Random rand;
+
+        private static DisplayData displayData;
 
         static Courses()
         {
-            groupC = new Dictionary<Language, LinkedList<Group>>();
+            displayData = new DisplayData();
+            groupC = new Dictionary<Language, List<Group>>();
             individualC = new Dictionary<Language, LinkedList<Student>>();
             individualWishGroupC = new Dictionary<Language, LinkedList<Student>>();
+            allStudents = new LinkedList<Student>();
+            allGroups = new LinkedList<Group>();
             rand = new Random();
         }
 
@@ -72,7 +94,24 @@ namespace Part4
                 : false;
         }
 
-        public static void formGroups()
+        public static void makeTwoWeakSteps()
+        {
+            foreach (Student student in allStudents)
+            {
+                student.makeTwoWeekStep();
+            }
+
+            foreach (KeyValuePair<Language, List<Group>> langGroups in groupC)
+            {
+                foreach (Group group in langGroups.Value)
+                {
+                    group.makeTwoWeekStep();
+                }
+            }
+            
+        }
+
+        public static void formGroups(DataGrid groupTable, DataGrid studentTable)
         {
             foreach (Language lang in Enum.GetValues(typeof(Language)))
             {
@@ -85,50 +124,127 @@ namespace Part4
                     }
                     foreach (Level level in Enum.GetValues(typeof(Level)))
                     {
-                        if (specLangSt.Any(st => st.containsCourse(level))){
+                        if (specLangSt.Any(st => st.containsCourse(lang, level))){
                             LinkedList<Student> specLevelSt = 
-                                new LinkedList<Student>(specLangSt.Where(st => st.containsCourse(level)));
+                                new LinkedList<Student>(specLangSt.Where(st => st.containsCourse(lang, level)));
                             if (specLevelSt.Count < 5)
                             {
                                 continue;
                             }
                             foreach (Intensity inten in Enum.GetValues(typeof(Intensity)))
                             {
-                                if (specLevelSt.Any(st => st.containsCourse(inten))){
-                                    LinkedList<Group> existGr;
-                                    IEnumerable<Student> evenDaysSt = specLangSt.Where(
-                                        st => st.containsCourse(DayOfWeek.TUE, inten));
-                                    IEnumerable<Student> conDaysSt = specLangSt.Where(
-                                        st => st.containsCourse(DayOfWeek.MON, inten));
+                                if (specLevelSt.Any(st => st.containsCourse(lang, inten))){
+                                    Dictionary<Language, List<Group>> grC = groupC;
+                                    List<Group> existGr = null;
+                                    IEnumerable<Student> evenDaysSt = specLevelSt.Where(
+                                        st => st.containsCourse(lang, DayOfWeek.TUE, inten));
+                                    IEnumerable<Student> conDaysSt = specLevelSt.Where(
+                                        st => st.containsCourse(lang, DayOfWeek.MON, inten));
                                     LinkedList<Student> sts = new LinkedList<Student>(conDaysSt.ToList());
                                     if (groupC.TryGetValue(lang, out existGr))
                                     {
                                         if (conDaysSt.Count() >= 5)
                                         {
-                                            existGr = new LinkedList<Group>(existGr.Concat(formSpecGroups(new LinkedList<Student>(conDaysSt.ToList()), lang, level, inten, getConWDays()).ToList()));
+                                            existGr.AddRange(formSpecGroups(conDaysSt.ToList(), lang, level, inten, getConWDays()));
                                         }
                                         if (evenDaysSt.Count() >= 5)
                                         {
-                                            existGr = new LinkedList<Group>(existGr.Concat(formSpecGroups(new LinkedList<Student>(evenDaysSt.ToList()), lang, level, inten, getEvenWDays()).ToList()));
+                                            existGr.AddRange(formSpecGroups(evenDaysSt.ToList(), lang, level, inten, getEvenWDays()));
                                         }
                                     }
                                     else
                                     {
                                         if (conDaysSt.Count() >= 5)
                                         {
-                                            existGr = formSpecGroups(new LinkedList<Student>(conDaysSt.ToList()), lang, level, inten, getConWDays());
+                                            existGr = formSpecGroups(conDaysSt.ToList(), lang, level, inten, getConWDays());
                                         }
                                         if (evenDaysSt.Count() >= 5)
                                         {
-                                            existGr = formSpecGroups(new LinkedList<Student>(evenDaysSt.ToList()), lang, level, inten, getEvenWDays());
+                                            if (existGr != null)
+                                            {
+                                                existGr.AddRange(formSpecGroups(evenDaysSt.ToList(), lang, level, inten, getEvenWDays()));
+                                            }
+                                            else
+                                            {
+                                                existGr = formSpecGroups(evenDaysSt.ToList(), lang, level, inten, getEvenWDays());
+                                            }
+                                            
                                         }
+                                        if (existGr != null)
+                                        {
+                                            groupC.Add(lang, existGr);
+                                        }  
                                     }
                                 }
                             }
                         }
                     }
+
+                    Student[] groupSts = specLangSt.Where(st => st.isGroup(lang)).ToArray();
+                    for (int i = 0; i < groupSts.Length; i++)
+                    {
+                            specLangSt.Remove(groupSts[i]);
+                    }
                 }             
             }
+
+            List<Group> groups = getAllGroups();
+            groupTable.Items.Clear();
+            foreach (Group group in groups)
+            {
+                groupTable.Items.Add(group);
+            }
+            studentTable.Items.Clear();
+            foreach (Student student in allStudents)
+            {
+                studentTable.Items.Add(student);
+            }
+        }
+
+        public static void mapGroupOnStudents(DataGrid dg_groups, DataGrid dg_students)
+        {
+            dg_students.Items.Clear();
+            Group group = (Group)dg_groups.SelectedItem;
+            foreach (Student student in group.students)
+            {
+                dg_students.Items.Add(student);
+            }
+        }
+
+        public static void mapStudentOnCourses(DataGrid dg_students, DataGrid dg_courses)
+        {
+            dg_courses.Items.Clear();
+            Student student = (Student)dg_students.SelectedItem;
+            foreach (KeyValuePair<Language, CourseInf> course in student.courses)
+            {
+                dg_courses.Items.Add(new CourseInform(course));
+            }
+        }
+
+        public static List<Group> getAllGroups()
+        {
+            List<Group> groups = new List<Group>(); 
+
+            foreach (KeyValuePair<Language, List<Group>> langGr in groupC)
+            {
+                groups = groups.Concat(langGr.Value).ToList();
+            }
+
+            return groups;
+        }
+
+        
+
+        public static void addRowToGrTable(DataGrid dg, Group gr)
+        {
+            GroupInform tempG = new GroupInform();
+            tempG.id = gr.id;
+            tempG.level = gr.level.ToString();
+            tempG.lang = gr.lang.ToString();
+            tempG.inten = gr.inten.ToString();
+            tempG.countOfListeners = gr.getCountOfListeners();
+            tempG.visDays = String.Join(" ", gr.visDays.ToArray());
+            dg.Items.Add(tempG);
         }
 
         public static LinkedList<DayOfWeek> getConWDays()
@@ -148,26 +264,26 @@ namespace Part4
             return days;
         }
 
-        public static LinkedList<Group> formSpecGroups(
-            LinkedList<Student> students, Language lang, 
+        public static List<Group> formSpecGroups(
+            List<Student> students, Language lang, 
             Level level, 
             Intensity inten, 
             LinkedList<DayOfWeek> visDays)
         {
-            int countOfSpecGroups = students.Count / 10 + students.Count % 10 == 0 ? 0 : 1;
-            LinkedList<Group> res = new LinkedList<Group>();
+            int countOfSpecGroups = students.Count / 10 + (students.Count % 10 == 0 ? 0 : 1);
+            List<Group> res = new List<Group>();
 
             for (int i = 0; i < countOfSpecGroups; i++)
             {
-                Group temp = new Group(lang, level, inten, visDays);
+                Group temp = new Group(lang, level, inten, visDays, getCourseDurationInWeeks(inten));
                 for (int j = 0; j < 5; j++)
                 {
                     temp.addStudent(students.First());
                     Student s = students.First();
-                    students.RemoveFirst();
-                    students.AddLast(s);
+                    students.RemoveAt(0);
+                    students.Add(s);
                 }
-                res.AddLast(temp);
+                res.Add(temp);
             }
 
             int remStud = students.Count - countOfSpecGroups * 5;
@@ -176,11 +292,10 @@ namespace Part4
             {
                 res.First().addStudent(students.First());
                 Group temp = res.First();
-                res.RemoveFirst();
-                res.AddLast(temp);
+                res.RemoveAt(0);
+                res.Add(temp);
                 Student s = students.First();
-                students.RemoveFirst();
-                students.AddLast(s);
+                students.RemoveAt(0);
             }
 
             return res;
@@ -191,6 +306,8 @@ namespace Part4
 
         public static void addStudent(Student addingStudent)
         {
+            allStudents.AddLast(addingStudent);
+
             foreach (KeyValuePair<Language, CourseInf> course in addingStudent.courses)
             {
                 if (course.Value.isWishGroup)
@@ -272,9 +389,10 @@ namespace Part4
             else
             {
                 lang = availLang.ElementAt(new Random().Next(availLang.Count));
+                availLang.Remove(lang);
             }
             
-            availLang.Remove(lang);
+            
             Level level = generateLevel(age);
             Intensity inten = generateIntensity(level);
             bool isGroupClasses = isGroup();
@@ -337,25 +455,25 @@ namespace Part4
             switch (level)
             {
                 case Level.LOW:
-                    return eval < 40
+                    return eval < 70
                         ? Intensity.STANDARD
                         : Intensity.INTENSIVE;
                 case Level.MIDDLE:
-                    return eval < 15
+                    return eval < 10
                         ? Intensity.MAINTAINING
-                        : eval < 70
+                        : eval < 80
                         ? Intensity.STANDARD
                         : Intensity.INTENSIVE;
                 case Level.ADVANCED:
-                    return eval < 15
+                    return eval < 10
                         ? Intensity.INTENSIVE
                         : eval < 60
                         ? Intensity.STANDARD
                         : Intensity.MAINTAINING;
                 case Level.HIGH:
-                    return eval < 10
+                    return eval < 5
                         ? Intensity.INTENSIVE
-                        : eval < 40
+                        : eval < 30
                         ? Intensity.STANDARD
                         : Intensity.MAINTAINING;
                 default: throw new ArgumentException(); 
@@ -366,6 +484,11 @@ namespace Part4
         {
             double rand = new Random().NextDouble();
             return rand > 0.15 ? true : false;
+        }
+
+        public static void addRandomStudent()
+        {
+            addStudent(GenerateStudent());
         }
 
         public static Language generateLanguage(){
@@ -390,22 +513,19 @@ namespace Part4
             switch (lang)
             {
                 case Language.ENGLISH: cost = 15; break;
-                case Language.GERMAN: cost = 17; break;
-                case Language.FRENCH: cost = 19; break;
-                case Language.SPANISH: cost = 21; break;
-                case Language.RUSSIAN: cost = 23; break;
-                case Language.JAPANESE: cost = 25; break;
+                case Language.GERMAN: cost = 16; break;
+                case Language.FRENCH: cost = 17; break;
+                case Language.SPANISH: cost = 18; break;
+                case Language.RUSSIAN: cost = 19; break;
+                case Language.JAPANESE: cost = 20; break;
                 default: cost = 0; break;
             }
             if (intens == Intensity.INTENSIVE)
                 cost *= 1.25;
             if (intens == Intensity.MAINTAINING)
                 cost *= 0.75;
-
-            if (!isGroup)
-            {
-                cost *= 3;
-            }
+       
+            cost *= 3;
 
             return (int) (cost * days);
         }
@@ -447,6 +567,11 @@ namespace Part4
 
         }
 
+        public static bool isVisitClass(int age)
+        {
+            return new Random().Next((int)((double)age / 10 + 7)) > 10;
+        }
+
         public void regroup(LinkedList<Group> groups)
         {
             groups.OrderBy(group => group.getCountOfListeners());
@@ -457,6 +582,17 @@ namespace Part4
                     groups.First(),
                     Math.Min(Math.Abs(groups.Last().getCountOfListeners() - 7), Math.Abs(groups.First().getCountOfListeners() - 7)));
                 groups.OrderBy(group => group.getCountOfListeners());
+            }
+        }
+
+        public static int getCourseDurationInWeeks(Intensity inten)
+        {
+            switch (inten)
+            {
+                case Intensity.INTENSIVE: return 4;
+                case Intensity.STANDARD: return 8;
+                case Intensity.MAINTAINING: return 12;
+                default: return 0;
             }
         }
 

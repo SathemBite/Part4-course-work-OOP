@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using Part4.BusinessLogic.AdaptersToDataGrid;
 
 namespace Part4
 {
@@ -40,7 +41,35 @@ namespace Part4
 
         private void button_formGroups_Click(object sender, RoutedEventArgs e)
         {
-            Courses.formGroups();
+            Courses.formGroups(dg_groups, dg_students);
+        }
+
+        private void b_enrollRandStudent_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < 50; i++)
+            Courses.addRandomStudent();
+        }
+
+        private void button_makeTwoWeekStep_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void dg_students_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Courses.mapStudentOnCourses(dg_students, dg_courses);
+        }
+
+        private void dg_groups_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Courses.mapGroupOnStudents(dg_groups, dg_students);
+        }
+
+        private void button_ClearTables_Click(object sender, RoutedEventArgs e)
+        {
+            dg_groups.Items.Clear();
+            dg_courses.Items.Clear();
+            dg_students.Items.Clear();
         }
     }
 }

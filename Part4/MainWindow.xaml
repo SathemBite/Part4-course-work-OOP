@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Part4"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="Language_courses" x:Class="Part4.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="640" Width="960" Foreground="Black" WindowStartupLocation="CenterScreen" UseLayoutRounding="False">
+        Title="MainWindow" Height="640" Width="1177.5" Foreground="Black" WindowStartupLocation="CenterScreen" UseLayoutRounding="False">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
             <GradientStop Color="#FF57CD77"/>
@@ -28,7 +28,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button x:Name="button_Copy1" Content="Enroll random student" HorizontalAlignment="Left" Margin="0,68,0,0" VerticalAlignment="Top" Width="203" Click="button_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
+        <Button x:Name="b_enrollRandStudent" Content="Enroll random student" HorizontalAlignment="Left" Margin="0,68,0,0" VerticalAlignment="Top" Width="203" Click="b_enrollRandStudent_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -38,31 +38,34 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <DataGrid x:Name="dg_groups" HorizontalAlignment="Left" Height="173" Margin="233,40,0,0" VerticalAlignment="Top" Width="676" ColumnWidth="*">
+        <DataGrid x:Name="dg_groups" HorizontalAlignment="Left" Height="173" Margin="233,40,0,0" VerticalAlignment="Top" Width="913" ColumnWidth="*" MouseDoubleClick="dg_groups_MouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Group ID"/>
-                <DataGridTextColumn Header="Language"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Level"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Intensity"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Listeners"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Days of visits"/>
+                <DataGridTextColumn Header="Group ID" IsReadOnly="True" Binding="{Binding Path=id}"/>
+                <DataGridTextColumn Header="Language" IsReadOnly="True" Binding="{Binding Path=lang}"/>
+                <DataGridTextColumn Header="Intensity" IsReadOnly="True" Binding="{Binding Path=inten}"/>
+                <DataGridTextColumn Header="Level" IsReadOnly="True" Binding="{Binding Path=level}"/>
+                <DataGridTextColumn Header="CountOfListeners" IsReadOnly="True" Binding="{Binding Path=studCount}"/>
+                <DataGridTextColumn Header="Days of visits" IsReadOnly="True" Binding="{Binding Path=strVDays}"/>
+                <DataGridTextColumn Header="Duration (in weeks)" IsReadOnly="True" Binding="{Binding Path=duration}"/>
+                <DataGridTextColumn Header="Course week №" IsReadOnly="True" Binding="{Binding Path=studyWeekNum}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid HorizontalAlignment="Left" Height="145" Margin="233,255,0,0" VerticalAlignment="Top" Width="675" ColumnWidth="*">
+        <DataGrid x:Name="dg_students" HorizontalAlignment="Left" Height="145" Margin="233,255,0,0" VerticalAlignment="Top" Width="913" ColumnWidth="*" MouseDoubleClick="dg_students_MouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Name"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Age"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Count of courses"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Name" Binding="{Binding Path=fullName}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Age" Binding="{Binding Path=age}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Count of courses" Binding="{Binding Path=countOfCourses}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid HorizontalAlignment="Left" Height="176" Margin="233,423,0,0" VerticalAlignment="Top" Width="658" IsHitTestVisible="False">
+        <DataGrid x:Name="dg_courses" HorizontalAlignment="Left" Height="176" Margin="233,423,0,0" VerticalAlignment="Top" Width="913" ColumnWidth="*">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Language" Width="76"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Level" Width="60"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Intensity" Width="90"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Type" Width="88"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Days of visit" Width="180"/>
-                <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Cost per two weeks" Width="150"/>
+                <DataGridTextColumn Header="Language" Width="*" Binding="{Binding Path=lang}"/>
+                <DataGridTextColumn Header="Level" Width="*" Binding="{Binding Path=level}"/>
+                <DataGridTextColumn Header="Intensity" Width="*" Binding="{Binding Path=inten}"/>
+                <DataGridTextColumn Header="Type" Width="*" Binding="{Binding Path=type}"/>
+                <DataGridTextColumn Header="Days of visit" Width="*" Binding="{Binding Path=daysOfVisit}"/>
+                <DataGridTextColumn Header="Cost per two weeks" Width="*" Binding="{Binding Path=cost}"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Path=status}"/>
             </DataGrid.Columns>
         </DataGrid>
         <Button x:Name="button_formGroups" Content="Form groups" HorizontalAlignment="Left" Margin="0,133,0,0" VerticalAlignment="Top" Width="203" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True" Click="button_formGroups_Click">
@@ -75,7 +78,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button x:Name="button_Copy2" Content="Make two-week step" HorizontalAlignment="Left" Margin="0,200,0,0" VerticalAlignment="Top" Width="203" Click="button_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
+        <Button x:Name="button_makeTwoWeekStep" Content="Make two-week step" HorizontalAlignment="Left" Margin="0,213,0,0" VerticalAlignment="Top" Width="203" Click="button_makeTwoWeekStep_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -109,6 +112,16 @@
             <System:String>In all groups</System:String>
             <System:String>Individual classes</System:String>
         </ComboBox>
+        <Button x:Name="button_ClearTables" Content="Clear tables" HorizontalAlignment="Left" Margin="0,322,0,0" VerticalAlignment="Top" Width="203" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True" Click="button_ClearTables_Click">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1" ScaleX="1"/>
+                    <SkewTransform AngleY="0" AngleX="0"/>
+                    <RotateTransform Angle="0"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
 
     </Grid>
 </Window>
