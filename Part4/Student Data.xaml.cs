@@ -10,63 +10,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 
 namespace Part4
 {
 
 
-    public class CourseInf
-    {
-        
-        public Intensity inten;
-        public Level level;
-        public LinkedList<DayOfWeek> visitingDays;
-        public LinkedList<bool> visits;
-        public int costPerTwoW;
-        public int duration;
-        public bool isGroup;
-        public CourseStatus status;
-        public bool isWishGroup;
-
-
-        
-
-        public CourseInf(Intensity inten, Level level, LinkedList<DayOfWeek> visitingDays, int costPerTwoW, bool isGroup, bool isWishGroup)
-        {
-            this.inten = inten;
-            this.level = level;
-            this.visitingDays = visitingDays;
-            this.costPerTwoW = costPerTwoW;
-            this.visits = new LinkedList<bool>();
-            this.status = CourseStatus.ACTIVE;
-            this.isGroup = isGroup;
-            this.duration = isWishGroup ? isGroup ? Courses.getCourseDurationInWeeks(inten) : 4 : Courses.getCourseDurationInWeeks(inten) * 2;
-            this.isWishGroup = isWishGroup;
-        }
-
-        public bool oneDayStep(int age)
-        {
-            if (Courses.isLeaveCourse(visits.Count()))
-            {
-                status = CourseStatus.LEAVED;
-                return false;
-            }
-            else
-            {
-                if (visits.Count() / visitingDays.Count() == duration)
-                {
-                    status = CourseStatus.FINISHED;
-                    return false;
-                }
-                else
-                {
-                    visits.AddLast(Courses.isVisitClass(age));
-                    return true;
-                }
-                
-            }
-        }
-    }
+    
 
     /// <summary>
     /// Логика взаимодействия для Student_Data.xaml
@@ -225,6 +175,29 @@ namespace Part4
 
         private void enrollStudent_Click(object sender, RoutedEventArgs e)
         {
+            String name = getText(NameBox);
+            String age = getText(AgeBox);
+            Regex nameReg = new Regex(@"^[A-Za-z\\-\\ ]+?$");
+            Regex ageReg = new Regex(@"^([7-9])|([1-9]\d{0,2}\w?)$");
+
+            if (!nameReg.IsMatch(name))
+            {
+                MessageBox.Show("Name must include only character symbols!");
+                return;
+            }
+            if (!ageReg.IsMatch(age))
+            {
+                MessageBox.Show("Age must be grand then 7 years and include 1 - 3 Integer digit!");
+                return;
+            }
+
+            if (courses.Count == 0)
+            {
+                MessageBox.Show("You didn't choose any course, please choose one or more");
+                return;
+            }
+
+
             nSt = new Student(
                 new TextRange(NameBox.Document.ContentStart, NameBox.Document.ContentEnd).Text,
                 int.Parse(new TextRange(AgeBox.Document.ContentStart, AgeBox.Document.ContentEnd).Text),

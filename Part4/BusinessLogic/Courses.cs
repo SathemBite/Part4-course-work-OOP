@@ -53,7 +53,8 @@ namespace Part4
     {
         LEAVED,
         ACTIVE,
-        FINISHED
+        FINISHED,
+        WAITED
     }
 
     public struct DisplayData
@@ -94,7 +95,7 @@ namespace Part4
                 : false;
         }
 
-        public static void makeTwoWeakSteps()
+        public static void makeTwoWeakSteps(DataGrid groupTable, DataGrid studentTable)
         {
             foreach (Student student in allStudents)
             {
@@ -108,7 +109,20 @@ namespace Part4
                     group.makeTwoWeekStep();
                 }
             }
-            
+
+            showGroupsInTable(groupTable, allGroups);
+            showStudentsInTable(studentTable, allStudents);
+
+            foreach(KeyValuePair<Language, LinkedList<Student>> students in individualWishGroupC)
+            {
+                Student[] temp = students.Value.Where(st => st.getStatus(students.Key) != CourseStatus.ACTIVE).ToArray();
+                for (int i = 0; i < temp.Length; i++)
+                {
+                    students.Value.Remove(temp[i]);
+                }
+                
+            }
+
         }
 
         public static void formGroups(DataGrid groupTable, DataGrid studentTable)
@@ -188,18 +202,28 @@ namespace Part4
                 }             
             }
 
-            List<Group> groups = getAllGroups();
-            groupTable.Items.Clear();
-            foreach (Group group in groups)
+            showGroupsInTable(groupTable, allGroups);
+            showStudentsInTable(studentTable, allStudents);
+        }
+
+        public static void showStudentsInTable(DataGrid dgStud, LinkedList<Student> students)
+        {
+            dgStud.Items.Clear();
+            foreach (Student student in students)
             {
-                groupTable.Items.Add(group);
-            }
-            studentTable.Items.Clear();
-            foreach (Student student in allStudents)
-            {
-                studentTable.Items.Add(student);
+                dgStud.Items.Add(student);
             }
         }
+
+        public static void showGroupsInTable(DataGrid dgGroups, LinkedList<Group> groups)
+        {
+            dgGroups.Items.Clear();
+            foreach (Group group in groups)
+            {
+                dgGroups.Items.Add(group);
+            }
+        }
+
 
         public static void mapGroupOnStudents(DataGrid dg_groups, DataGrid dg_students)
         {
@@ -209,6 +233,8 @@ namespace Part4
             {
                 dg_students.Items.Add(student);
             }
+
+            
         }
 
         public static void mapStudentOnCourses(DataGrid dg_students, DataGrid dg_courses)
@@ -276,6 +302,7 @@ namespace Part4
             for (int i = 0; i < countOfSpecGroups; i++)
             {
                 Group temp = new Group(lang, level, inten, visDays, getCourseDurationInWeeks(inten));
+                allGroups.AddLast(temp);
                 for (int j = 0; j < 5; j++)
                 {
                     temp.addStudent(students.First());
@@ -527,7 +554,7 @@ namespace Part4
        
             cost *= 3;
 
-            return (int) (cost * days);
+            return (int) (2 * cost * days);
         }
 
         private static LinkedList<DayOfWeek> generateVisitDaysOfWeek(bool isGroup)

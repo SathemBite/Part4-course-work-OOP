@@ -52,7 +52,7 @@ namespace Part4
 
         private void button_makeTwoWeekStep_Click(object sender, RoutedEventArgs e)
         {
-
+            Courses.makeTwoWeakSteps(dg_groups, dg_students);
         }
 
         private void dg_students_MouseDoubleClick(object sender, MouseButtonEventArgs e)

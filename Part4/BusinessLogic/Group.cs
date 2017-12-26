@@ -37,20 +37,25 @@ namespace Part4
 
         public bool makeTwoWeekStep()
         {
-            studyWeekNum += 2;
-            foreach (Student student in students)
+            if (studyWeekNum <= duration)
             {
-                if (student.getStatus(lang) == CourseStatus.FINISHED)
+                studyWeekNum += 2;
+                foreach (Student student in students)
                 {
-                    return false;
+                    if (student.getStatus(lang) == CourseStatus.FINISHED)
+                    {
+                        return false;
+                    }
+                    if (student.getStatus(lang) == CourseStatus.LEAVED)
+                    {
+                        students.Remove(student);
+                    }
                 }
-                if (student.getStatus(lang) == CourseStatus.LEAVED)
-                {
-                    students.Remove(student);
-                }
+
+                return true;
             }
 
-            return true;
+            return false;
         }
 
 
@@ -71,11 +76,9 @@ namespace Part4
             studCount++;
             CourseInf cInf;
             student.courses.TryGetValue(lang, out cInf);
-            if (!cInf.isGroup)
-            {
-                cInf.costPerTwoW /= 3;
-            }
+            cInf.costPerTwoW /= 3;
             cInf.isGroup = true;;
+            cInf.duration = duration;
             students.AddLast(student);
         }
 

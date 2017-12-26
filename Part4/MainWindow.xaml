@@ -55,6 +55,7 @@
                 <DataGridTextColumn IsReadOnly="True" Header="Name" Binding="{Binding Path=fullName}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Age" Binding="{Binding Path=age}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Count of courses" Binding="{Binding Path=countOfCourses}"/>
+                <DataGridTextColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="State"/>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid x:Name="dg_courses" HorizontalAlignment="Left" Height="176" Margin="233,423,0,0" VerticalAlignment="Top" Width="913" ColumnWidth="*">

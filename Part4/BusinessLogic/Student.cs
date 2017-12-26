@@ -5,6 +5,59 @@ using System.Text;
 
 namespace Part4
 {
+    public class CourseInf
+    {
+
+        public Intensity inten;
+        public Level level;
+        public LinkedList<DayOfWeek> visitingDays;
+        public LinkedList<bool> visits;
+        public int costPerTwoW;
+        public int duration;
+        public bool isGroup;
+        public CourseStatus status;
+        public bool isWishGroup;
+
+
+
+
+        public CourseInf(Intensity inten, Level level, LinkedList<DayOfWeek> visitingDays, int costPerTwoW, bool isGroup, bool isWishGroup)
+        {
+            this.inten = inten;
+            this.level = level;
+            this.visitingDays = visitingDays;
+            this.costPerTwoW = costPerTwoW;
+            this.visits = new LinkedList<bool>();
+            this.status = CourseStatus.ACTIVE;
+            this.isGroup = isGroup;
+            this.duration = isWishGroup ? isGroup ? Courses.getCourseDurationInWeeks(inten) : 4 : Courses.getCourseDurationInWeeks(inten) * 2;
+            this.isWishGroup = isWishGroup;
+        }
+
+        public bool oneDayStep(int age)
+        {
+            if (Courses.isLeaveCourse(visits.Count()))
+            {
+                status = CourseStatus.LEAVED;
+                return false;
+            }
+            else
+            {
+                if (visits.Count() / visitingDays.Count() == duration)
+                {
+                    status = CourseStatus.FINISHED;
+                    return false;
+                }
+                else
+                {
+                    visits.AddLast(Courses.isVisitClass(age));
+                    return true;
+                }
+
+            }
+        }
+    }
+
     public class Student
     {
         private static int ider = 1;
@@ -39,12 +92,12 @@ namespace Part4
         {
             foreach (KeyValuePair<Language, CourseInf> course in courses)
             {
-                int classesInTwoWeeks = course.Value.duration * course.Value.visitingDays.Count();
-                bool active;
-                do
+                int classesInTwoWeeks = 2 * course.Value.visitingDays.Count();
+                if (getStatus(course.Key) == CourseStatus.ACTIVE)
                 {
-                    active = course.Value.oneDayStep(age);
-                } while (active && --classesInTwoWeeks > 0);
+                    do{} while (course.Value.oneDayStep(age) && --classesInTwoWeeks > 0);
+                }
+                
             }
         }
 
