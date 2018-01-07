@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Part4"
         xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="Language_courses" x:Class="Part4.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="640" Width="1177.5" Foreground="Black" WindowStartupLocation="CenterScreen" UseLayoutRounding="False">
+        Title="MainWindow" Height="674" Width="1338.9" Foreground="Black" WindowStartupLocation="CenterScreen" UseLayoutRounding="False">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
             <GradientStop Color="#FF57CD77"/>
@@ -18,7 +18,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="button" Content="Enroll custom student" HorizontalAlignment="Left" Margin="0,9,0,0" VerticalAlignment="Top" Width="203" Click="button_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
+        <Button x:Name="button" Content="Enroll custom student" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Width="175" Click="button_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="47" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -28,7 +28,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button x:Name="b_enrollRandStudent" Content="Enroll random student" HorizontalAlignment="Left" Margin="0,68,0,0" VerticalAlignment="Top" Width="203" Click="b_enrollRandStudent_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
+        <Button x:Name="b_enrollRandStudent" Content="Enroll random student" HorizontalAlignment="Left" Margin="190,14,0,0" VerticalAlignment="Top" Width="175" Click="b_enrollRandStudent_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="47" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -38,27 +38,26 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <DataGrid x:Name="dg_groups" HorizontalAlignment="Left" Height="173" Margin="233,40,0,0" VerticalAlignment="Top" Width="913" ColumnWidth="*" MouseDoubleClick="dg_groups_MouseDoubleClick">
+        <DataGrid x:Name="dg_groups" HorizontalAlignment="Left" Height="173" Margin="382,75,0,0" VerticalAlignment="Top" Width="938" ColumnWidth="*" MouseDoubleClick="dg_groups_MouseDoubleClick" FontSize="14">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Group ID" IsReadOnly="True" Binding="{Binding Path=id}"/>
-                <DataGridTextColumn Header="Language" IsReadOnly="True" Binding="{Binding Path=lang}"/>
+                <DataGridTextColumn Header="Group ID" IsReadOnly="True" Binding="{Binding Path=id}" Width="67"/>
+                <DataGridTextColumn Header="Language" IsReadOnly="True" Binding="{Binding Path=lang}" Width="88"/>
                 <DataGridTextColumn Header="Intensity" IsReadOnly="True" Binding="{Binding Path=inten}"/>
-                <DataGridTextColumn Header="Level" IsReadOnly="True" Binding="{Binding Path=level}"/>
+                <DataGridTextColumn Header="Level" IsReadOnly="True" Binding="{Binding Path=level}" Width="*"/>
                 <DataGridTextColumn Header="CountOfListeners" IsReadOnly="True" Binding="{Binding Path=studCount}"/>
                 <DataGridTextColumn Header="Days of visits" IsReadOnly="True" Binding="{Binding Path=strVDays}"/>
-                <DataGridTextColumn Header="Duration (in weeks)" IsReadOnly="True" Binding="{Binding Path=duration}"/>
+                <DataGridTextColumn Header="Duration(in weeks)" IsReadOnly="True" Binding="{Binding Path=duration}"/>
                 <DataGridTextColumn Header="Course week №" IsReadOnly="True" Binding="{Binding Path=studyWeekNum}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="dg_students" HorizontalAlignment="Left" Height="145" Margin="233,255,0,0" VerticalAlignment="Top" Width="913" ColumnWidth="*" MouseDoubleClick="dg_students_MouseDoubleClick">
+        <DataGrid x:Name="dg_students" HorizontalAlignment="Left" Height="172" Margin="382,290,0,0" VerticalAlignment="Top" Width="938" ColumnWidth="*" MouseDoubleClick="dg_students_MouseDoubleClick" FontSize="14">
             <DataGrid.Columns>
                 <DataGridTextColumn IsReadOnly="True" Header="Name" Binding="{Binding Path=fullName}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Age" Binding="{Binding Path=age}"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Count of courses" Binding="{Binding Path=countOfCourses}"/>
-                <DataGridTextColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="State"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="dg_courses" HorizontalAlignment="Left" Height="176" Margin="233,423,0,0" VerticalAlignment="Top" Width="913" ColumnWidth="*">
+        <DataGrid x:Name="dg_courses" HorizontalAlignment="Left" Height="154" Margin="382,480,0,0" VerticalAlignment="Top" Width="938" ColumnWidth="*" FontSize="14">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Language" Width="*" Binding="{Binding Path=lang}"/>
                 <DataGridTextColumn Header="Level" Width="*" Binding="{Binding Path=level}"/>
@@ -69,7 +68,7 @@
                 <DataGridTextColumn Header="Status" Binding="{Binding Path=status}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="button_formGroups" Content="Form groups" HorizontalAlignment="Left" Margin="0,133,0,0" VerticalAlignment="Top" Width="203" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True" Click="button_formGroups_Click">
+        <Button x:Name="button_formGroups" Content="Form groups" HorizontalAlignment="Left" Margin="12,66,0,0" VerticalAlignment="Top" Width="175" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="47" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True" Click="button_formGroups_Click">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -79,7 +78,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button x:Name="button_makeTwoWeekStep" Content="Make two-week step" HorizontalAlignment="Left" Margin="0,213,0,0" VerticalAlignment="Top" Width="203" Click="button_makeTwoWeekStep_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
+        <Button x:Name="button_makeTwoWeekStep" Content="Make two-week step" HorizontalAlignment="Left" Margin="190,66,0,0" VerticalAlignment="Top" Width="175" Click="button_makeTwoWeekStep_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="48" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -89,7 +88,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <ComboBox x:Name="cb_groupLang" HorizontalAlignment="Left" Height="20" Margin="233,10,0,0" VerticalAlignment="Top" Width="130" SelectedIndex="0">
+        <ComboBox x:Name="cb_groupLang" HorizontalAlignment="Left" Height="25" Margin="528,42,0,0" VerticalAlignment="Top" Width="130" SelectedIndex="0" FontSize="14" SelectionChanged="cb_groupLang_SelectionChanged">
             <System:String>All</System:String>
             <local:Language>ENGLISH</local:Language>
             <local:Language>GERMAN</local:Language>
@@ -98,7 +97,7 @@
             <local:Language>RUSSIAN</local:Language>
             <local:Language>JAPANESE</local:Language>
         </ComboBox>
-        <ComboBox x:Name="cb_groupLang_Copy" HorizontalAlignment="Left" Height="20" Margin="233,230,0,0" VerticalAlignment="Top" Width="130" SelectedIndex="0">
+        <ComboBox x:Name="cb_studetnLang" HorizontalAlignment="Left" Height="26" Margin="532,258,0,0" VerticalAlignment="Top" Width="130" SelectedIndex="0" FontSize="14" SelectionChanged="cb_studentParameters_SelectionChanged">
             <System:String>All</System:String>
             <local:Language>ENGLISH</local:Language>
             <local:Language>GERMAN</local:Language>
@@ -107,13 +106,37 @@
             <local:Language>RUSSIAN</local:Language>
             <local:Language>JAPANESE</local:Language>
         </ComboBox>
-        <ComboBox x:Name="cb_groupLang_Copy1" HorizontalAlignment="Left" Height="20" Margin="368,230,0,0" VerticalAlignment="Top" Width="130" SelectedIndex="0">
+        <Button x:Name="button_ClearTables" Content="Clear tables" HorizontalAlignment="Left" Margin="12,118,0,0" VerticalAlignment="Top" Width="175" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="47" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True" Click="button_ClearTables_Click">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1" ScaleX="1"/>
+                    <SkewTransform AngleY="0" AngleX="0"/>
+                    <RotateTransform Angle="0"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <ComboBox x:Name="cb_studentAge" HorizontalAlignment="Left" Height="26" Margin="1051,257,0,0" VerticalAlignment="Top" Width="130" SelectedIndex="0" FontSize="14" SelectionChanged="cb_studentParameters_SelectionChanged">
+            <System:String>All</System:String>
+            <System:String>Kids and teenagers (7 - 18 years)</System:String>
+            <System:String>Middle-aged people (19 - 60)</System:String>
+            <System:String>Aged people (60+)</System:String>
+        </ComboBox>
+        <ComboBox x:Name="cb_studentType" HorizontalAlignment="Left" Height="26" Margin="781,258,0,0" VerticalAlignment="Top" Width="130" SelectedIndex="0" FontSize="14" SelectionChanged="cb_studentParameters_SelectionChanged">
             <System:String>All</System:String>
             <System:String>In selected group</System:String>
-            <System:String>In all groups</System:String>
-            <System:String>Individual classes</System:String>
         </ComboBox>
-        <Button x:Name="button_ClearTables" Content="Clear tables" HorizontalAlignment="Left" Margin="0,322,0,0" VerticalAlignment="Top" Width="203" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="54" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True" Click="button_ClearTables_Click">
+        <Label Content="Groups language:" HorizontalAlignment="Left" Margin="382,38,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label Content="Students language:" HorizontalAlignment="Left" Margin="382,254,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label Content="Select type" HorizontalAlignment="Left" Margin="679,254,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label Content="Students age:" HorizontalAlignment="Left" Margin="941,254,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <TextBox x:Name="tb_enrollingCount" HorizontalAlignment="Left" Height="26" Margin="12,225,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="209" FontSize="16"/>
+        <Label x:Name="someLabel" Content="Count of students enrolling&#xD;&#xA;every two weeks:" HorizontalAlignment="Left" Margin="12,167,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label Content="Duration of two-weeks &#xD;&#xA;studying period &#xD;&#xA;(in seconds):" HorizontalAlignment="Left" Margin="12,250,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <TextBox x:Name="tb_periodDur" HorizontalAlignment="Left" Height="26" Margin="12,333,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="209" FontSize="16"/>
+        <Label Content="Duration of modeling&#xA;period (in months):" HorizontalAlignment="Left" Margin="12,358,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <TextBox x:Name="tb_modelDur" HorizontalAlignment="Left" Height="26" Margin="12,416,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="209" FontSize="16"/>
+        <Button x:Name="button_runModelling_process" Content="Run modeling process" HorizontalAlignment="Left" Margin="190,119,0,0" VerticalAlignment="Top" Width="175" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="16" Height="47" RenderTransformOrigin="0.5,0.5" Background="#FFECE5E5" AutomationProperties.IsColumnHeader="True" Click="button_runModelling_process_Click">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1" ScaleX="1"/>
@@ -123,6 +146,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
+        <Calendar x:Name="calendar_curDate" HorizontalAlignment="Right" Margin="0,459,1139,0" Height="168" VerticalAlignment="Top" Width="180" FontSize="16"/>
 
     </Grid>
 </Window>

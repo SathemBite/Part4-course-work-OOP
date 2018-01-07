@@ -58,6 +58,7 @@
     <Compile Include="BusinessLogic\AdaptersToDataGrid\Adapters.cs" />
     <Compile Include="BusinessLogic\Courses.cs" />
     <Compile Include="BusinessLogic\Group.cs" />
+    <Compile Include="BusinessLogic\Model.cs" />
     <Compile Include="BusinessLogic\Student.cs" />
     <Compile Include="Student Data.xaml.cs">
       <DependentUpon>Student Data.xaml</DependentUpon>

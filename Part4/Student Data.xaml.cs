@@ -129,6 +129,15 @@ namespace Part4
                     }
                     else
                     {
+                        isGroup = !isGroup;
+                        courses.Add(lang,
+                        new CourseInf(
+                            inten,
+                            level,
+                            visD,
+                            Courses.getTwoWeekCost(lang, inten, isGroupClasses(), visD.Count),
+                            isGroup,
+                            true).setStatus(CourseStatus.WAITED));
                         return;
                     }
                 }

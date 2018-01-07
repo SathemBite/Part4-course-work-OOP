@@ -34,9 +34,20 @@ namespace Part4
             this.isWishGroup = isWishGroup;
         }
 
+        public CourseInf setStatus(CourseStatus status)
+        {
+            this.status = status;
+            return this;
+        }
+            
+
         public bool oneDayStep(int age)
         {
-            if (Courses.isLeaveCourse(visits.Count()))
+            if (status == CourseStatus.WAITED)
+            {
+                return false;
+            }
+            if (Courses.isLeaveCourse(visits.Count() + 1))
             {
                 status = CourseStatus.LEAVED;
                 return false;
@@ -92,10 +103,10 @@ namespace Part4
         {
             foreach (KeyValuePair<Language, CourseInf> course in courses)
             {
-                int classesInTwoWeeks = 2 * course.Value.visitingDays.Count();
                 if (getStatus(course.Key) == CourseStatus.ACTIVE)
                 {
-                    do{} while (course.Value.oneDayStep(age) && --classesInTwoWeeks > 0);
+                    int classesInTwoWeeks = 2 * course.Value.visitingDays.Count();
+                    do {} while (course.Value.oneDayStep(age) && --classesInTwoWeeks > 0);
                 }
                 
             }
@@ -112,6 +123,12 @@ namespace Part4
             }
 
             return CourseStatus.LEAVED;
+        }
+
+        public bool containsCourse(Language lang)
+        {
+            return courses.Any(
+                course => course.Key == lang);
         }
 
         public bool containsCourse(Language lang, Level level)

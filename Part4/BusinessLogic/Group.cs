@@ -15,7 +15,6 @@ namespace Part4
         public Intensity inten { get; set; }
         public LinkedList<DayOfWeek> visDays;
         public int studCount { get; set; }
-        public int stringDays { get; set; }
         public int duration { get; set; }
         public int studyWeekNum { get; set; }
 
@@ -37,28 +36,16 @@ namespace Part4
 
         public bool makeTwoWeekStep()
         {
-            if (studyWeekNum <= duration)
+            if (studyWeekNum < duration)
             {
                 studyWeekNum += 2;
-                foreach (Student student in students)
-                {
-                    if (student.getStatus(lang) == CourseStatus.FINISHED)
-                    {
-                        return false;
-                    }
-                    if (student.getStatus(lang) == CourseStatus.LEAVED)
-                    {
-                        students.Remove(student);
-                    }
-                }
-
+                students = new LinkedList<Student>(students.Where(st => st.getStatus(lang) != CourseStatus.LEAVED));
+                //studCount = students.Count();
                 return true;
             }
 
             return false;
         }
-
-
 
         private Student getStudent(int index)
         {
@@ -77,14 +64,10 @@ namespace Part4
             CourseInf cInf;
             student.courses.TryGetValue(lang, out cInf);
             cInf.costPerTwoW /= 3;
-            cInf.isGroup = true;;
+            cInf.isGroup = true;
+            cInf.status = CourseStatus.ACTIVE;
             cInf.duration = duration;
             students.AddLast(student);
-        }
-
-        public int getCountOfListeners()
-        {
-            return students.Count;
         }
 
         public static void moveStudents(Group src, Group dest, int count)

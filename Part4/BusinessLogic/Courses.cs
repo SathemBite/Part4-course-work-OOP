@@ -73,17 +73,54 @@ namespace Part4
         private static LinkedList<Student> allStudents;
         private static Random rand;
 
-        private static DisplayData displayData;
 
         static Courses()
         {
-            displayData = new DisplayData();
             groupC = new Dictionary<Language, List<Group>>();
             individualC = new Dictionary<Language, LinkedList<Student>>();
             individualWishGroupC = new Dictionary<Language, LinkedList<Student>>();
             allStudents = new LinkedList<Student>();
             allGroups = new LinkedList<Group>();
             rand = new Random();
+        }
+
+        public static void selectTheSpecGroups(Language lang, DataGrid groupsTable)
+        {
+            List<Group> groups;
+            groupsTable.Items.Clear();
+            if (groupC.TryGetValue(lang, out groups))
+            {
+                foreach (Group group in groups)
+                {
+                    groupsTable.Items.Add(group);
+                }
+            }
+        }
+
+        public static void selectLangSpecStudents(Language lang, DataGrid studentsTable)
+        {
+            IEnumerable<Student> students = allStudents.Where(st => st.containsCourse(lang));
+            studentsTable.Items.Clear();
+            foreach (Student st in students)
+            {
+                studentsTable.Items.Add(st);
+            }
+        }
+
+        public static void selectByAgeStudents(DataGrid studentsDg, int ageGroup)
+        {
+            Student[] students = studentsDg
+                .Items
+                .Cast<Student>()
+                .Where(st => ageGroup == 1 
+                ? st.age >= 19 
+                : ageGroup == 2 
+                    ? st.age < 18 || st.age > 60
+                    : st.age <= 60).ToArray();
+            for (int i = 0; i < students.Length; i++)
+            {
+                studentsDg.Items.Remove(students[i]);
+            }
         }
 
         public static bool isCanFormGroup(LinkedList<DayOfWeek> visDays, Language lang, Level level, Intensity inten) {
@@ -95,7 +132,7 @@ namespace Part4
                 : false;
         }
 
-        public static void makeTwoWeakSteps(DataGrid groupTable, DataGrid studentTable)
+        public static void makeTwoWeakSteps()
         {
             foreach (Student student in allStudents)
             {
@@ -110,12 +147,9 @@ namespace Part4
                 }
             }
 
-            showGroupsInTable(groupTable, allGroups);
-            showStudentsInTable(studentTable, allStudents);
-
             foreach(KeyValuePair<Language, LinkedList<Student>> students in individualWishGroupC)
             {
-                Student[] temp = students.Value.Where(st => st.getStatus(students.Key) != CourseStatus.ACTIVE).ToArray();
+                Student[] temp = students.Value.Where(st => st.getStatus(students.Key) != CourseStatus.ACTIVE && st.getStatus(students.Key) != CourseStatus.WAITED).ToArray();
                 for (int i = 0; i < temp.Length; i++)
                 {
                     students.Value.Remove(temp[i]);
@@ -125,7 +159,7 @@ namespace Part4
 
         }
 
-        public static void formGroups(DataGrid groupTable, DataGrid studentTable)
+        public static void formGroups()
         {
             foreach (Language lang in Enum.GetValues(typeof(Language)))
             {
@@ -201,7 +235,10 @@ namespace Part4
                     }
                 }             
             }
+        }
 
+        public static void showAllGroupsAndStudents(DataGrid groupTable, DataGrid studentTable)
+        {
             showGroupsInTable(groupTable, allGroups);
             showStudentsInTable(studentTable, allStudents);
         }
@@ -215,10 +252,28 @@ namespace Part4
             }
         }
 
+        public static void showAllStudentsInTable(DataGrid dgStud)
+        {
+            dgStud.Items.Clear();
+            foreach (Student student in allStudents)
+            {
+                dgStud.Items.Add(student);
+            }
+        }
+
         public static void showGroupsInTable(DataGrid dgGroups, LinkedList<Group> groups)
         {
             dgGroups.Items.Clear();
             foreach (Group group in groups)
+            {
+                dgGroups.Items.Add(group);
+            }
+        }
+
+        public static void showAllGroupsInTable(DataGrid dgGroups)
+        {
+            dgGroups.Items.Clear();
+            foreach (Group group in allGroups)
             {
                 dgGroups.Items.Add(group);
             }
@@ -261,17 +316,7 @@ namespace Part4
 
         
 
-        public static void addRowToGrTable(DataGrid dg, Group gr)
-        {
-            GroupInform tempG = new GroupInform();
-            tempG.id = gr.id;
-            tempG.level = gr.level.ToString();
-            tempG.lang = gr.lang.ToString();
-            tempG.inten = gr.inten.ToString();
-            tempG.countOfListeners = gr.getCountOfListeners();
-            tempG.visDays = String.Join(" ", gr.visDays.ToArray());
-            dg.Items.Add(tempG);
-        }
+
 
         public static LinkedList<DayOfWeek> getConWDays()
         {
@@ -326,6 +371,34 @@ namespace Part4
             }
 
             return res;
+        }
+
+        public static string getStatistics()
+        {
+            StringBuilder stats = new StringBuilder();
+            String nL = Environment.NewLine;
+            String[] ages = { "Teenagers", "Middle-aged people", "Aged people" };
+            foreach (Language lang in Enum.GetValues(typeof(Language)))
+            {
+                IEnumerable<Student> students = allStudents.Where(st => st.containsCourse(lang));
+                if (students.Count() != 0)
+                {
+                    stats.AppendFormat("Count of " + lang + " learners: {0,-20}" + nL, students.Count());
+                    stats.AppendFormat("Average age: {0, -20}\n" + nL, students.Average(st => st.age));
+                    stats.Append("Of them:" + nL);
+                    stats.AppendFormat("Group learners: {0, 15}" + nL, students.Where(st => st.isGroup(lang)).Count());
+                    stats.AppendFormat("Individual learners: {0, 10}" + nL, students.Where(st => !st.isGroup(lang)).Count());
+                    foreach (CourseStatus status in Enum.GetValues(typeof(CourseStatus)))
+                    {
+                        stats.AppendFormat("{0, -10} course: {1, 12}" + nL, status.ToString(), students.Where(st => st.getStatus(lang) == status).Count());
+                    }
+                    stats.AppendFormat("{0} (7 - 18 years): {1, 13}" + nL, ages[0], students.Where(st => st.age < 19).Count());
+                    stats.AppendFormat("{0} (19 - 60 years): {1, 3}" + nL, ages[1], students.Where(st => st.age >= 19 && st.age <= 60).Count());
+                    stats.AppendFormat("{0} (61+ years): {1, 14}" + nL, ages[2], students.Where(st => st.age > 60).Count());
+                }
+                stats.Append(nL + nL);
+            }
+            return stats.ToString();
         }
 
 
@@ -587,10 +660,7 @@ namespace Part4
 
         public static bool isLeaveCourse(int classNum)
         {
-            double arg = (double) 1 / Math.Pow(2, classNum);
-            Random random = new Random();
-            double rand = random.NextDouble() * 2;
-            return (1 / (1 + Math.Pow(Math.E, arg))) > rand;
+            return (1 / Math.Pow(Math.E, classNum) > new Random().NextDouble());
 
         }
 
@@ -601,14 +671,14 @@ namespace Part4
 
         public void regroup(LinkedList<Group> groups)
         {
-            groups.OrderBy(group => group.getCountOfListeners());
-            while (groups.Last().getCountOfListeners() - groups.First().getCountOfListeners() > 1)
+            groups.OrderBy(group => group.studCount);
+            while (groups.Last().studCount - groups.First().studCount > 1)
             {
                 Group.moveStudents(
                     groups.Last(),
                     groups.First(),
-                    Math.Min(Math.Abs(groups.Last().getCountOfListeners() - 7), Math.Abs(groups.First().getCountOfListeners() - 7)));
-                groups.OrderBy(group => group.getCountOfListeners());
+                    Math.Min(Math.Abs(groups.Last().studCount - 7), Math.Abs(groups.First().studCount - 7)));
+                groups.OrderBy(group => group.studCount);
             }
         }
 
